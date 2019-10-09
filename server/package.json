@@ -1,0 +1,18 @@
+{
+  "name": "iot-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ndm": "nodemon app.js --ignore status.json"
+  },
+  "keywords": [
+    "demo"
+  ],
+  "author": "z0gSh1u",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <title>
+            图书馆座位智能管理 - IoT应用Demo by z0gSh1u
+        </title>
+        <link rel="stylesheet" href="./css/bootstrap.min.css" />
+        <link rel="stylesheet" href="./css/my.css" />
+        <script src="./js/jquery-3.3.1.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/axios.min.js"></script>
+        <script src="./js/vue.js"></script>
+        <script src="./js/my.js"></script>
+    </head>
+
+    <body>
+        <div class="headBanner">
+            <h3>图书馆座位智能管理 Demo</h3>
+            <h5>by 09017227 卓旭</h5>
+            <a href="./hot.html">查看座位热力图</a>
+        </div>
+        <br><br><br><br>
+        <div class="seats" id="app">
+            <div v-for="seat in seats" class="seat">
+                <img v-show="seat.status=='free'" src="./img/seat_green.png" style=" width: 60%;"/>
+                <img v-show="seat.status=='busy'" src="./img/seat_red.png" style=" width: 60%;"/>
+                <img v-show="seat.status=='booked'" src="./img/seat_yellow.png" style=" width: 60%;"/>
+                <img v-show="seat.status=='leave'" src="./img/seat_yellow.png" style=" width: 60%;"/>
+                <p>座位 {{seat.id}}</p>
+                <p v-show="seat.status=='free'">空闲座位</p>
+                <p v-show="seat.status=='busy'">正在使用</p>
+                <p v-show="seat.status=='booked'">已被预订</p>
+                <p v-show="seat.status=='leave'">用户暂离</p>
+                <button v-show="seat.status=='free'" @click="bookBtnClick(seat.id)">立即预约</button>
+                <button v-show="seat.status!='free'">暂无操作</button>
+            </div>
+        </div>
+
+        <script>
+            var vm = new Vue({
+                el: "#app",
+                data: {
+                    _this: this,
+                    seats: [],
+                    timeOut: null
+                },
+                created() {
+                    this.reGet();
+                    this.timeOut = setInterval(() => {
+                        this.reGet();
+                        console.log("running");
+                    }, 2000);
+                },
+                beforeDestroy() {
+                    clearInterval(timeOut);
+                },
+                methods: {
+                    reGet() {
+                        axios.get(_pathJoin('./api/status'))
+                            .then((res) => {
+                                this.seats = res.data.seats;
+                            });
+                    },
+                    bookBtnClick(id) {
+                        var xh = prompt("请输入一卡通号：");
+                        if (xh != "")
+                            axios.post(_pathJoin('./api/book'), {
+                                "xh": xh,
+                                "id": id
+                            }).then(res => {
+                                alert(res.data);
+                                window.location.href = window.location.href;
+                            })
+                    }
+                }
+            })
+        </script>
+
+    </body>
+
+</html>

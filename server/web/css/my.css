@@ -1,0 +1,12 @@
+.headBanner {
+    text-align: center
+}
+
+.seats {
+    text-align: center
+}
+
+.seat {
+    display: inline-block; 
+    width: 45%;
+}

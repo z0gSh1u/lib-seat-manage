@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <title>Admin - IoT应用Demo by z0gSh1u</title>
+        <meta charset="utf-8">
+        <script src="./js/axios.min.js"></script>
+        <script src="./js/my.js"></script>
+    </head>
+    <body>
+        <div style="text-align:center">
+        
+            <p>后台管理</p>
+            <button onclick="_releaseAll();">Release All</button>
+
+        </div>
+    
+        <script>
+            function _releaseAll() {
+                var _pw = prompt('Password:');
+                axios.post(_pathJoin('./api/release_all'), {
+                    "pw": _pw
+                }).then((res) => {
+                    alert(res.data);
+                })
+            }
+        </script>
+    
+    </body>
+</html>

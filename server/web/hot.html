@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    </meta>
+    <title>
+        图书馆座位热力图 - IoT应用Demo by z0gSh1u
+    </title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/my.css" />
+    <script src="./js/jquery-3.3.1.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <script src="./js/vue.js"></script>
+    <script src="./js/my.js"></script>
+    <script src="./js/highcharts.js"></script>
+    <script src="./js/modules/heatmap.js"></script>
+    <script src="./js/modules/exporting.js"></script>
+</head>
+
+<body>
+    <div class="headBanner">
+        <h3>图书馆座位热力图 Demo</h3>
+        <h5>by 09017227 卓旭</h5>
+        <a href="./index.html">返回首页</a>
+    </div>
+    <br><br><br><br>
+    <div class="container" id="container"></div>
+
+    <script type="text/javascript">
+        var heatMapData = [
+            [0, 0, 10], [0, 1, 15],
+            [1, 0, 8], [1, 1, 20]
+        ];
+        axios.get(_pathJoin('./api/status'))
+            .then((res) => {
+                var jsonObject = res.data.seats;
+                heatMapData[0][2] = jsonObject[0].heat;
+                heatMapData[1][2] = jsonObject[1].heat;
+                heatMapData[2][2] = jsonObject[2].heat;
+                heatMapData[3][2] = jsonObject[3].heat;
+                
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'heatmap',
+                        marginTop: 40,
+                        marginBottom: 80,
+                        plotBorderWidth: 1
+                    },
+                    title: {
+                        text: '图书馆座位热力图'
+                    },
+                    xAxis: {
+                        categories: ['A', 'B']
+                    },
+                    yAxis: {
+                        categories: ['1', '2'],
+                        title: null
+                    },
+                    colorAxis: {
+                        min: 0,
+                        minColor: '#FFFFFF',
+                        maxColor: Highcharts.getOptions().colors[0]
+                    },
+                    legend: {
+                        align: 'right',
+                        layout: 'vertical',
+                        margin: 0,
+                        verticalAlign: 'top',
+                        y: 25,
+                        symbolHeight: 280
+                    },
+                    tooltip: {
+                        formatter: function () {
+                            return "座位热力";
+                        }
+                    },
+                    series: [{
+                        name: '单座位热力',
+                        borderWidth: 1,
+                        data: heatMapData,
+                        dataLabels: {
+                            enabled: true,
+                            color: '#000000'
+                        }
+                    }]
+                });
+            })
+    </script>
+
+</body>
+
+</html>
