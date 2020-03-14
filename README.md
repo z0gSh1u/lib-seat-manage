@@ -2,6 +2,8 @@
 
 本项目硬件使用Arduino Uno开发板与PIR传感器，软件基于Vue.js (前端框架) + Node.js (后端) + Python (软硬件交互侦听)。主要功能是图书馆座位的预约、热度的统计和入/离座的检测。
 
+更多运行时介绍请参考：[INTRODUCTION.md](https://github.com/z0gSh1u/lib-seat-manage/blob/master/INTRODUCTION.md)
+
 ![Image](https://s2.ax1x.com/2019/10/09/uo9ckT.jpg)
 
 ## 部署
