@@ -2,8 +2,6 @@
 
 本项目硬件使用Arduino Uno开发板与PIR传感器，软件基于Vue.js (前端框架) + Node.js (后端) + Python (软硬件交互侦听)。主要功能是图书馆座位的预约、热度的统计和入/离座的检测。
 
-更多运行时介绍请参考：[INTRODUCTION.md](https://github.com/z0gSh1u/lib-seat-manage/blob/master/INTRODUCTION.md)
-
 ![Image](https://s2.ax1x.com/2019/10/09/uo9ckT.jpg)
 
 ## 部署
@@ -61,43 +59,56 @@ const int Seat1FreeBtn 		= 6;  // 座位释放按钮输入
   cd host
   python listener.py
   ```
-
-## 第三方库声明
-
-- Bootstrap
-
-  ```
-   * Bootstrap v3.3.7 (http://getbootstrap.com)
-   * Copyright 2011-2016 Twitter, Inc.
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-  ```
-
-- Highcharts
-
-  ```
-   * @license Highcharts
-   * (c) 2009-2016 Torstein Honsi
-   * License: www.highcharts.com/license
-  ```
-
-- axios
-
-  ```
-  /* axios v0.18.0 | (c) 2018 by Matt Zabriskie */
-  ```
-
-- Vue.js
-
-  ```
-   * Vue.js v2.6.10
-   * (c) 2014-2019 Evan You
-   * Released under the MIT License.
-  ```
-
-- jQuery
-
-  ```
-  /*! jQuery v3.3.1 | (c) JS Foundation and other contributors | jquery.org/license */
-  ```
-
   
+## 运行时介绍
+
+**一、项目简介**
+
+​    “图书馆座位管理系统”是一套基于物联网的软、硬件系统，其主要功能有：在网页上进行座位情况查看、座位预定并实时同步到硬件端；长时间未入座自动释放座位；人员暂离自动切换座位状态；座位热度统计，等等。
+
+**二、项目测试**
+
+​    在宿主机打开用于监听硬件的脚本listener.py（起到网关的作用），连接硬件，在网页端进行座位预定操作：
+
+![img](https://s1.ax1x.com/2020/03/14/8QSVC8.png)
+
+​    可以看到，当座位被预定后，电路状态转换，绿灯熄灭，黄灯亮起。
+
+​    此时，按下左侧的入座按钮（后期可以接入RFID刷卡模块），电路状态转换，绿灯熄灭，红灯亮起，代表有人入座。同时，网页端在Vue.js的帮助下无刷新自动更新座位状态。如果预定后长时间没有入座，该座位会被自动释放。
+
+![img](https://s1.ax1x.com/2020/03/14/8QSA4f.png)
+
+​    当人员从座位上起身暂离后，PIR传感器检测不到人体，自动切换暂离状态，无需人手工操作。当人员离场时，按下右侧离开按钮，系统释放座位。每当座位有人预定时，该座位的热度值会加一。从而在一段时间的运行后，可以获得座位的热度图：
+
+![img](https://s1.ax1x.com/2020/03/14/8QSkUP.png)
+
+​    后期，该图可以结合真实座位情况进行布局，从而直观地得知图书馆哪一个区域的座位比较受欢迎，就可以在那个区域多安排作为；某个座位一直没有人愿意坐，就可以检查是不是座位损坏了等等。这便是大数据的获得与使用。
+
+**三、附录**
+
+| **表1 – 串口指令体系**  |                      |
+| ----------------------- | -------------------- |
+| **指令**                | **含义**             |
+| **向Arduino写** |                      |
+| 1                       | 设置座位1预定 / 暂离 |
+| 2                       | 设置座位1空闲        |
+| 3                       | 设置座位1忙          |
+| **从Arduino读** |                      |
+| R1A                     | 座位1入座按钮被按下  |
+| R1B                     | 座位1无人            |
+| R1C                     | 座位1有人            |
+| R1D                     | 座位1释放按钮被按下  |
+
+ 
+
+| **表2 – 网页端接口** |          |                          |                        |
+| ---------------------------- | -------- | ------------------------ | ---------------------- |
+| **地址**                     | **类型** | **参数**                 | **作用**               |
+| /api/status                  | GET      | —                        | 获取当前座位  状态JSON |
+| /api/book                    | POST     | xh: 一卡通号  id: 座位号 | 预定座位               |
+| /api/set_leave               | POST     | id: 座位号               | 设置座位暂离           |
+| /api/set_busy                | POST     | id: 座位号               | 设置座位忙             |
+| /api/set_free                | POST     | id: 座位号               | 设置座位空闲           |
+| /api/release_all             | POST     | pw: 密码               | 释放所有座位           |
+
+\* 由于仅作demo使用，set系列接口均未添加安全认证
